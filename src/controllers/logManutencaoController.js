@@ -2,38 +2,65 @@ import client from "../config/connection.js";
 
 class LogManutencaoController {
   static listarLogManutencao = (req, res) => {
-    client.query(`SELECT * FROM log_manutencao`, (err, result) => {
+    const query = {
+      text: "SELECT * FROM log_manutencao",
+      values: [],
+    };
+
+    client.query(query, (err, result) => {
       if (!err) {
         res.status(200).send(result.rows);
       } else {
-        res.status(500).send("Algo de errado");
+        res
+          .status(500)
+          .send(
+            "Algo de errado, não foi possivel listar os Logs de Manutenção."
+          );
       }
     });
     client.end;
   };
 
   static listarLogManutencaoPorId = (req, res) => {
-    client.query(
-      `SELECT * FROM log_manutencao WHERE id = ${req.params.id}`,
-      (err, result) => {
-        if (!err) {
-          res.send(result.rows);
-        }
+    const query = {
+      text: "SELECT * FROM log_manutencao WHERE id = $1",
+      values: [req.params.id],
+    };
+
+    client.query(query, (err, result) => {
+      if (!err) {
+        res.status(200).send(result.rows);
+      } else {
+        res
+          .status(500)
+          .send("Algo de errado, não foi possivel listar o Log de Manutenção.");
       }
-    );
+    });
     client.end;
   };
 
   static cadastrarLogManutencao = (req, res) => {
     const user = req.body;
-    let conteudoQuery = `INSERT INTO log_manutencao(id_maquina, id_funcionario, descricao, status)
-                        VALUES  (${user.id_maquina}, ${user.id_funcionario}, '${user.descricao}', '${user.status}');`;
 
-    client.query(conteudoQuery, (err, result) => {
+    const query = {
+      text: "INSERT INTO log_manutencao(id_maquina, id_funcionario, descricao, status) VALUES ($1, $2, $3, $4);",
+      values: [
+        user.id_maquina,
+        user.id_funcionario,
+        user.descricao,
+        user.status,
+      ],
+    };
+
+    client.query(query, (err, result) => {
       if (!err) {
-        res.send("Industria cadastrada com sucesso.");
+        res.status(200).send("Log de Manutenção cadastrado com sucesso.");
       } else {
-        console.log(err.message);
+        res
+          .status(500)
+          .send(
+            "Algo de errado, não foi possivel cadastrar o Log de Manutenção."
+          );
       }
     });
     client.end;
@@ -42,26 +69,46 @@ class LogManutencaoController {
   static atualizarLogManutencao = (req, res) => {
     const user = req.body;
 
-    let conteudoQuery = `UPDATE log_manutencao SET id_maquina = ${user.id_maquina}, id_funcionario = '${user.id_funcionario}', descricao = '${user.descricao}', status = '${user.status}' WHERE id = ${req.params.id};`;
+    const query = {
+      text: "UPDATE log_manutencao SET id_maquina = $1, id_funcionario = $2, descricao = $3, status = $4 WHERE id = $5;",
+      values: [
+        user.id_maquina,
+        user.id_funcionario,
+        user.descricao,
+        user.status,
+        req.params.id,
+      ],
+    };
 
-    client.query(conteudoQuery, (err, result) => {
+    client.query(query, (err, result) => {
       if (!err) {
-        res.send("Industria atualizada com sucesso.");
+        res.status(200).send("Log de Manutenção atualizado com sucesso.");
       } else {
-        console.log(err.message);
+        res
+          .status(500)
+          .send(
+            "Algo de errado, não foi possivel atualizar o Log de Manutenção."
+          );
       }
     });
     client.end;
   };
 
   static excluirLogManutencao = (req, res) => {
-    let conteudoQuery = `DELETE FROM log_manutencao WHERE id = ${req.params.id}`;
+    const query = {
+      text: "DELETE FROM log_manutencao WHERE id = $1",
+      values: [req.params.id],
+    };
 
-    client.query(conteudoQuery, (err, result) => {
+    client.query(query, (err, result) => {
       if (!err) {
-        res.send("Industria deletada com sucesso.");
+        res.status(200).send("Log de Manutenção deletado com sucesso.");
       } else {
-        console.log(err.message);
+        res
+          .status(500)
+          .send(
+            "Algo de errado, não foi possivel deletar o Log de Manutenção."
+          );
       }
     });
     client.end;
