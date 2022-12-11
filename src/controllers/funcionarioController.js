@@ -3,7 +3,7 @@ import client from "../config/connection.js";
 class FuncionarioController {
   static listarFuncionario = (req, res) => {
     const query = {
-      text: "SELECT * FROM funcionario",
+      text: "SELECT * FROM funcionario WHERE status = 'TRUE'",
       values: [],
     };
 
@@ -21,7 +21,7 @@ class FuncionarioController {
 
   static listarFuncionarioPorId = (req, res) => {
     const query = {
-      text: "SELECT * FROM funcionario WHERE id = $1",
+      text: "SELECT * FROM funcionario WHERE id = $1 AND status = 'TRUE'",
       values: [req.params.id],
     };
 
@@ -41,7 +41,7 @@ class FuncionarioController {
     const user = req.body;
 
     const query = {
-      text: "INSERT INTO funcionario(id_setor, nome, cpf, data_nascimento, genero, telefone, email, cep, uf, cidade, bairro, rua, numero, data_entrada, data_saida, cargo) VALUES  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);",
+      text: "INSERT INTO funcionario(id_setor, nome, cpf, data_nascimento, genero, telefone, email, cep, uf, cidade, bairro, rua, numero, data_entrada, data_saida, cargo, status) VALUES  ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17);",
       values: [
         user.id_setor,
         user.nome,
@@ -59,6 +59,7 @@ class FuncionarioController {
         user.data_entrada,
         user.data_saida,
         user.cargo,
+        user.status
       ],
     };
 
@@ -78,7 +79,7 @@ class FuncionarioController {
     const user = req.body;
 
     const query = {
-      text: "UPDATE funcionario SET id_setor = $1, nome = $2, cpf = $3, data_nascimento = $4, genero = $5, telefone = $6, email = $7, cep = $8, uf = $9, cidade = $10, bairro = $11, rua = $12, numero = $13, data_entrada = $14, data_saida = $15, cargo = $16 WHERE id = $17;",
+      text: "UPDATE funcionario SET id_setor = $1, nome = $2, cpf = $3, data_nascimento = $4, genero = $5, telefone = $6, email = $7, cep = $8, uf = $9, cidade = $10, bairro = $11, rua = $12, numero = $13, data_entrada = $14, data_saida = $15, cargo = $16, status = $17 WHERE id = $18;",
       values: [
         user.id_setor,
         user.nome,
@@ -96,6 +97,7 @@ class FuncionarioController {
         user.data_entrada,
         user.data_saida,
         user.cargo,
+        user.status,
         req.params.id,
       ],
     };
@@ -114,7 +116,7 @@ class FuncionarioController {
 
   static excluirFuncionario = (req, res) => {
     const query = {
-      text: "DELETE FROM funcionario WHERE id = $1",
+      text: "UPDATE funcionario SET status = 'FALSE' WHERE id = $1",
       values: [req.params.id],
     };
 
@@ -134,7 +136,7 @@ class FuncionarioController {
     const user = req.body;
 
     const query = {
-      text: "UPDATE funcionario SET data_saida = $1 WHERE id = $2;",
+      text: "UPDATE funcionario SET data_saida = $1, status = 'FALSE' WHERE id = $2;",
       values: [user.data_saida, req.params.id],
     };
 

@@ -43,12 +43,13 @@ class LogManutencaoController {
     const user = req.body;
 
     const query = {
-      text: "INSERT INTO log_manutencao(id_maquina, id_funcionario, descricao, status) VALUES ($1, $2, $3, $4);",
+      text: "INSERT INTO log_manutencao(id_maquina, id_funcionario, descricao, data_update, status_manutencao) VALUES ($1, $2, $3, $4, $5);",
       values: [
         user.id_maquina,
         user.id_funcionario,
         user.descricao,
-        user.status,
+        user.data_update,
+        user.status_manutencao,
       ],
     };
 
@@ -70,12 +71,13 @@ class LogManutencaoController {
     const user = req.body;
 
     const query = {
-      text: "UPDATE log_manutencao SET id_maquina = $1, id_funcionario = $2, descricao = $3, status = $4 WHERE id = $5;",
+      text: "UPDATE log_manutencao SET id_maquina = $1, id_funcionario = $2, descricao = $3, data_update = $4, status_manutencao = $5 WHERE id = $6;",
       values: [
         user.id_maquina,
         user.id_funcionario,
         user.descricao,
-        user.status,
+        user.data_update,
+        user.status_manutencao,
         req.params.id,
       ],
     };

@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 class IndustriaController {
   static listarIndustrias = (req, res) => {
     const query = {
-      text: "SELECT * FROM industria",
+      text: "SELECT * FROM industria WHERE status = 'TRUE'",
       values: [],
     };
 
@@ -22,7 +22,7 @@ class IndustriaController {
 
   static listarIndustriasID = (req, res) => {
     const query = {
-      text: "SELECT * FROM industria WHERE id = $1",
+      text: "SELECT * FROM industria WHERE id = $1 AND status = 'TRUE'",
       values: [req.params.id],
     };
 
@@ -48,7 +48,7 @@ class IndustriaController {
     };
 
     const query2 = {
-      text: "INSERT INTO industria(nome, cnpj, telefone, email, cep, uf, cidade, bairro, rua, numero, senha) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);",
+      text: "INSERT INTO industria(nome, cnpj, telefone, email, cep, uf, cidade, bairro, rua, numero, senha, status) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",
       values: [
         user.nome,
         user.cnpj,
@@ -61,7 +61,13 @@ class IndustriaController {
         user.rua,
         user.numero,
         senhaCriptografada,
+        user.status,
       ],
+    };
+
+    const query3 = {
+      text: "SELECT * FROM industria WHERE email = $1 AND id = $2;",
+      values: [user.email, req.params.id],
     };
 
     client.query(query1, async (err, result) => {
@@ -82,7 +88,9 @@ class IndustriaController {
           res.status(500).send("Algo de errado, email já cadastrado.");
         }
       } else {
-        res.status(500).send("Algo de errado, não foi possivel cadastrar a industria.");
+        res
+          .status(500)
+          .send("Algo de errado, não foi possivel cadastrar a industria.");
       }
     });
 
@@ -99,7 +107,7 @@ class IndustriaController {
     };
 
     const query2 = {
-      text: "UPDATE industria SET nome = $1, cnpj = $2, telefone = $3, email = $4, cep = $5, uf = $6, cidade = $7, bairro = $8, rua = $9, numero = $10, senha = $11 WHERE id = $12;",
+      text: "UPDATE industria SET nome = $1, cnpj = $2, telefone = $3, email = $4, cep = $5, uf = $6, cidade = $7, bairro = $8, rua = $9, numero = $10, senha = $11, status = $12 WHERE id = $13;",
       values: [
         user.nome,
         user.cnpj,
@@ -112,8 +120,14 @@ class IndustriaController {
         user.rua,
         user.numero,
         senhaCriptografada,
+        user.status,
         req.params.id,
       ],
+    };
+
+    const query3 = {
+      text: "SELECT * FROM industria WHERE email = $1 AND id = $2;",
+      values: [user.email, req.params.id],
     };
 
     client.query(query1, async (err, result) => {
@@ -125,14 +139,34 @@ class IndustriaController {
             } else {
               res
                 .status(500)
-                .send("Algo de errado, não foi possivel atualizar a industria.");
+                .send(
+                  "Algo de errado, não foi possivel atualizar a industria."
+                );
             }
-          });      
+          });
         } else {
-          res.status(500).send("Algo de errado, email já cadastrado.");
+          client.query(query3, (err, result) => {
+            if (result.rows.length > 0) {
+              client.query(query2, (err, result) => {
+                if (!err) {
+                  res.status(200).send("Industria atualizada com sucesso.");
+                } else {
+                  res
+                    .status(500)
+                    .send(
+                      "Algo de errado, não foi possivel atualizar a industria."
+                    );
+                }
+              });
+            } else {
+              res.status(500).send("Algo de errado, email já cadastrado.");
+            }
+          });
         }
       } else {
-        res.status(500).send("Algo de errado, não foi possivel atualizar a industria.");
+        res
+          .status(500)
+          .send("Algo de errado, não foi possivel atualizar a industria.");
       }
     });
 
@@ -141,7 +175,7 @@ class IndustriaController {
 
   static deletarIndustria = (req, res) => {
     const query = {
-      text: "DELETE FROM industria WHERE id = $1;",
+      text: "UPDATE industria SET status = 'FALSE' WHERE id = $1;",
       values: [req.params.id],
     };
 
@@ -161,7 +195,7 @@ class IndustriaController {
     const user = req.body;
 
     const query = {
-      text: "SELECT * FROM industria WHERE email = $1;",
+      text: "SELECT * FROM industria WHERE email = $1 AND status = 'TRUE';",
       values: [user.email],
     };
 
