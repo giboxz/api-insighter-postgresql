@@ -3,8 +3,8 @@ import client from "../config/connection.js";
 class LogManutencaoController {
   static listarLogManutencao = (req, res) => {
     const query = {
-      text: "SELECT * FROM log_manutencao",
-      values: [],
+      text: "SELECT l.id, l.id_maquina, l.id_funcionario, l.descricao, l.data_update, l.status_manutencao FROM log_manutencao l JOIN maquina m ON l.id_maquina = m.id JOIN setor s ON m.id_setor = s.id WHERE s.id_industria = $1",
+      values: [req.user.id_industria],
     };
 
     client.query(query, (err, result) => {
@@ -23,8 +23,8 @@ class LogManutencaoController {
 
   static listarLogManutencaoPorId = (req, res) => {
     const query = {
-      text: "SELECT * FROM log_manutencao WHERE id = $1",
-      values: [req.params.id],
+      text: "SELECT l.id, l.id_maquina, l.id_funcionario, l.descricao, l.data_update, l.status_manutencao FROM log_manutencao l JOIN maquina m ON l.id_maquina = m.id JOIN setor s ON m.id_setor = s.id WHERE s.id_industria = $1 AND l.id = $2",
+      values: [req.user.id_industria, req.params.id],
     };
 
     client.query(query, (err, result) => {
@@ -71,7 +71,7 @@ class LogManutencaoController {
     const user = req.body;
 
     const query = {
-      text: "UPDATE log_manutencao SET id_maquina = $1, id_funcionario = $2, descricao = $3, data_update = $4, status_manutencao = $5 WHERE id = $6;",
+      text: "UPDATE log_manutencao l SET id_maquina = $1, id_funcionario = $2, descricao = $3, data_update = $4, status_manutencao = $5 FROM maquina m JOIN setor s ON m.id_setor = s.id WHERE m.id = l.id_maquina AND l.id = $6 AND s.id_industria = $7",
       values: [
         user.id_maquina,
         user.id_funcionario,
@@ -79,6 +79,7 @@ class LogManutencaoController {
         user.data_update,
         user.status_manutencao,
         req.params.id,
+        req.user.id_industria,
       ],
     };
 
@@ -98,8 +99,8 @@ class LogManutencaoController {
 
   static excluirLogManutencao = (req, res) => {
     const query = {
-      text: "DELETE FROM log_manutencao WHERE id = $1",
-      values: [req.params.id],
+      text: "DELETE FROM log_manutencao l USING maquina m, setor s WHERE l.id_maquina = m.id AND m.id_setor = s.id AND m.id = l.id_maquina AND l.id = $1 AND s.id_industria = $2",
+      values: [req.params.id, req.user.id_industria],
     };
 
     client.query(query, (err, result) => {

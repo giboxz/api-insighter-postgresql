@@ -1,11 +1,14 @@
 import client from "../config/connection.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 class IndustriaController {
   static listarIndustrias = (req, res) => {
+    const user = req.user;
+
     const query = {
-      text: "SELECT * FROM industria WHERE status = 'TRUE'",
-      values: [],
+      text: "SELECT * FROM industria WHERE status = 'TRUE' AND id = $1;",
+      values: [user.id_industria],
     };
 
     client.query(query, (err, result) => {
@@ -63,11 +66,6 @@ class IndustriaController {
         senhaCriptografada,
         user.status,
       ],
-    };
-
-    const query3 = {
-      text: "SELECT * FROM industria WHERE email = $1 AND id = $2;",
-      values: [user.email, req.params.id],
     };
 
     client.query(query1, async (err, result) => {
@@ -203,7 +201,15 @@ class IndustriaController {
       if (!err) {
         if (result.rows.length > 0) {
           if (await bcrypt.compare(user.senha, result.rows[0].senha)) {
-            res.status(200).send("Industria logada com sucesso.");
+            const token = jwt.sign(
+              { id_industria: result.rows[0].id },
+              process.env.MY_SECRET,
+              { expiresIn: process.env.EXPIRES_IN }
+            );
+            res.status(200).json({
+              message: "Industria logada com sucesso.",
+              token: token
+            });
           } else {
             res.status(500).send("Algo de errado, falha na autenticação.");
           }

@@ -3,8 +3,8 @@ import client from "../config/connection.js";
 class SetorController {
   static listarSetor = (req, res) => {
     const query = {
-      text: "SELECT * FROM setor WHERE status = 'TRUE'",
-      values: [],
+      text: "SELECT * FROM setor WHERE status = 'TRUE' AND id_industria = $1",
+      values: [req.user.id_industria],
     };
 
     client.query(query, (err, result) => {
@@ -21,8 +21,8 @@ class SetorController {
 
   static listarSetorPorId = (req, res) => {
     const query = {
-      text: "SELECT * FROM setor WHERE id = $1 AND status = 'TRUE'",
-      values: [req.params.id],
+      text: "SELECT * FROM setor WHERE id = $1 AND status = 'TRUE' AND id_industria = $2",
+      values: [req.params.id, req.user.id_industria],
     };
 
     client.query(query, (err, result) => {
@@ -61,8 +61,8 @@ class SetorController {
     const user = req.body;
 
     const query = {
-      text: "UPDATE setor SET id_industria = $1, nome = $2, status = $3 WHERE id = $4;",
-      values: [user.id_industria, user.nome, user.status, req.params.id],
+      text: "UPDATE setor SET id_industria = $1, nome = $2, status = $3 WHERE id = $4 AND id_industria = $5;",
+      values: [user.id_industria, user.nome, user.status, req.params.id, req.user.id_industria],
     };
 
     client.query(query, (err, result) => {
@@ -79,8 +79,8 @@ class SetorController {
 
   static excluirSetor = (req, res) => {
     const query = {
-      text: "UPDATE setor SET status = 'FALSE' WHERE id = $1",
-      values: [req.params.id],
+      text: "UPDATE setor SET status = 'FALSE' WHERE id = $1 AND id_industria = $2",
+      values: [req.params.id, req.user.id_industria],
     };
 
     client.query(query, (err, result) => {
