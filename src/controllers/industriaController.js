@@ -1,6 +1,8 @@
 import client from "../config/connection.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config({ silent: process.env.NODE_ENV === 'production' });
 
 class IndustriaController {
   static listarIndustrias = (req, res) => {
