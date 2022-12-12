@@ -1,4 +1,4 @@
-import IndustriaDAO from "../dao/industriaDAO.js";
+import IndustriaDAO from "../dao/IndustriaDAO.js";
 
 class IndustriaController {
   static listarIndustrias = (req, res) => {

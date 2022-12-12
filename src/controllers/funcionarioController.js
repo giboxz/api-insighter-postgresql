@@ -1,4 +1,4 @@
-import FuncionarioDAO from "../dao/funcionarioDAO.js";
+import FuncionarioDAO from "../dao/FuncionarioDAO.js";
 
 class FuncionarioController {
   static listarFuncionario = (req, res) => {
