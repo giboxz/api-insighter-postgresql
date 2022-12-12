@@ -10,6 +10,6 @@ router
   .post("/loginindustria", IndustriaController.loginIndustria)
   .post("/industrias", IndustriaController.cadastrarIndustria)
   .put("/industrias/:id", loginAuth, IndustriaController.atualizarIndustria)
-  .delete("/industrias/:id", loginAuth, IndustriaController.deletarIndustria)
+  .delete("/industrias/:id", loginAuth, IndustriaController.deletarIndustria);
 
 export default router;

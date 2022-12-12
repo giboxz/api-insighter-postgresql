@@ -1,6 +1,6 @@
-import pkg from 'pg';
+import pkg from "pg";
 import dotenv from "dotenv";
-dotenv.config({ silent: process.env.NODE_ENV === 'production' });
+dotenv.config({ silent: process.env.NODE_ENV === "production" });
 
 const { Client } = pkg;
 

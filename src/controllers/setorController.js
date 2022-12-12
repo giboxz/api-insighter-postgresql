@@ -1,98 +1,26 @@
-import client from "../config/connection.js";
+import SetorDAO from "../dao/SetorDAO.js";
 
 class SetorController {
   static listarSetor = (req, res) => {
-    const query = {
-      text: "SELECT * FROM setor WHERE status = 'TRUE' AND id_industria = $1",
-      values: [req.user.id_industria],
-    };
-
-    client.query(query, (err, result) => {
-      if (!err) {
-        res.status(200).send(result.rows);
-      } else {
-        res
-          .status(500)
-          .send("Algo de errado, não foi possivel listar os setores.");
-      }
-    });
-    client.end;
+    SetorDAO.listarSetor(res, req.user.id_industria);
   };
 
   static listarSetorPorId = (req, res) => {
-    const query = {
-      text: "SELECT * FROM setor WHERE id = $1 AND status = 'TRUE' AND id_industria = $2",
-      values: [req.params.id, req.user.id_industria],
-    };
-
-    client.query(query, (err, result) => {
-      if (!err) {
-        res.status(200).send(result.rows);
-      } else {
-        res
-          .status(500)
-          .send("Algo de errado, não foi possivel listar o setor.");
-      }
-    });
-    client.end;
+    SetorDAO.listarSetorPorId(res, req.user.id_industria, req.params.id);
   };
 
   static cadastrarSetor = (req, res) => {
-    const user = req.body;
-
-    const query = {
-      text: "INSERT INTO setor(id_industria, nome, status) VALUES ($1, $2, $3);",
-      values: [user.id_industria, user.nome, user.status],
-    };
-
-    client.query(query, (err, result) => {
-      if (!err) {
-        res.status(200).send("Setor cadastrado com sucesso.");
-      } else {
-        res
-          .status(500)
-          .send("Algo de errado, não foi possivel cadastrar o setor.");
-      }
-    });
-    client.end;
+    const setor = req.body;
+    SetorDAO.cadastrarSetor(res, setor);
   };
 
   static atualizarSetor = (req, res) => {
-    const user = req.body;
-
-    const query = {
-      text: "UPDATE setor SET id_industria = $1, nome = $2, status = $3 WHERE id = $4 AND id_industria = $5;",
-      values: [user.id_industria, user.nome, user.status, req.params.id, req.user.id_industria],
-    };
-
-    client.query(query, (err, result) => {
-      if (!err) {
-        res.status(200).send("Setor atualizado com sucesso.");
-      } else {
-        res
-          .status(500)
-          .send("Algo de errado, não foi possivel atualizar o setor.");
-      }
-    });
-    client.end;
+    const setor = req.body;
+    SetorDAO.atualizarSetor(res, setor, req.params.id, req.user.id_industria);
   };
 
   static excluirSetor = (req, res) => {
-    const query = {
-      text: "UPDATE setor SET status = 'FALSE' WHERE id = $1 AND id_industria = $2",
-      values: [req.params.id, req.user.id_industria],
-    };
-
-    client.query(query, (err, result) => {
-      if (!err) {
-        res.status(200).send("Setor deletado com sucesso.");
-      } else {
-        res
-          .status(500)
-          .send("Algo de errado, não foi possivel deletar o setor.");
-      }
-    });
-    client.end;
+    SetorDAO.excluirSetor(res, req.params.id, req.user.id_industria);
   };
 }
 
