@@ -63,7 +63,7 @@ class LogMaquinaDAO {
 
   static async listarLogMaquinaComAnomalia(res, id_industria) {
     const query = {
-      text: "SELECT l2.id, l2.id_maquina, l2.data_hr, l2.temperatura, l2.ruido, l2.vibracao, l2.anomalia FROM log_maquina AS l2 JOIN (SELECT max(id) AS id, id_maquina, max(data_hr) FROM log_maquina GROUP BY id_maquina) AS l1 ON l2.id = l1.id JOIN maquina m ON l2.id_maquina = m.id JOIN setor s ON m.id_setor = s.id WHERE s.id_industria = $1 AND l2.anomalia = 'TRUE'",
+      text: "SELECT l2.id, l2.id_maquina, m.nome, l2.data_hr, l2.temperatura, l2.ruido, l2.vibracao, l2.anomalia FROM log_maquina AS l2 JOIN (SELECT max(id) AS id, id_maquina, max(data_hr) FROM log_maquina GROUP BY id_maquina) AS l1 ON l2.id = l1.id JOIN maquina m ON l2.id_maquina = m.id JOIN setor s ON m.id_setor = s.id WHERE s.id_industria = $1 AND l2.anomalia = 'TRUE'",
       values: [id_industria],
     };
 
