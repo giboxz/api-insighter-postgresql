@@ -6,12 +6,7 @@ const app = express();
 
 app.use(express.json());
 
-var corsOptions = {
-    origin: 'http://localhost:5500',
-    optionsSuccessStatus: 200
-  }
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 routes(app);
 
