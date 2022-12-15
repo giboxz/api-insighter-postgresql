@@ -3,7 +3,7 @@ import client from "../config/connection.js";
 class MaquinaDAO {
   static listarMaquinas(res, id_industria) {
     const query = {
-      text: "SELECT m.id, m.id_setor, m.nome AS nome_maquina, m.temperatura_min, m.temperatura_max, m.vibracao_min, m.vibracao_max, m.ruido_min, m.ruido_max, m.status FROM maquina m JOIN setor s ON m.id_setor = s.id WHERE m.status = 'TRUE' AND s.id_industria = $1",
+      text: "SELECT m.id, m.id_setor, s.nome AS nome_setor, m.nome AS nome_maquina, m.temperatura_min, m.temperatura_max, m.vibracao_min, m.vibracao_max, m.ruido_min, m.ruido_max, m.status FROM maquina m JOIN setor s ON m.id_setor = s.id WHERE m.status = 'TRUE' AND s.id_industria = $1",
       values: [id_industria],
     };
 
